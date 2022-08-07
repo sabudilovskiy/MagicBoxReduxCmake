@@ -1,0 +1,8 @@
+[requires]
+xxhash/0.8.1
+magic_enum/0.8.0
+libcds/2.3.3
+libzippp/5.0-1.8.0
+[generators]
+cmake_paths
+cmake_find_package
