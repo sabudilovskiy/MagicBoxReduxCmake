@@ -35,7 +35,7 @@ set(PROJECT_SOURCES
 		includes/xmlitem.h src/xmlitem.cpp
 		includes/xmlnode.h src/xmlnode.cpp
 		includes/ModController.h src/ModController.cpp
-		src/Downloader.cpp includes/Downloader.h src/ModDownloader.cpp includes/ModDownloader.h src/Support.cpp includes/AppSettings.cpp includes/AppSettings.h)
+		src/Downloader.cpp includes/Downloader.h src/ModDownloader.cpp includes/ModDownloader.h src/Support.cpp src/AppSettings.cpp includes/AppSettings.h)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MagicBoxReduxCmake
