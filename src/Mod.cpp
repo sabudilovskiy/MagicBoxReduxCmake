@@ -19,9 +19,7 @@ Mod::Mod(std::wstring id, XMLNode &node) : _id(std::move(id))
     auto node_versions = node.get_child(L"versions");
     if (!node_versions) throw MissingVersions(QString::fromStdWString(_id).toStdString());
     for (auto& version : *node_versions){
-        auto node_version_name = version.second->get_child(L"name");
-        if (!node_version_name) throw MissingVersionName(QString::fromStdWString(_id).toStdString());
-        _verisons.push_back(node_version_name->get_value());
+        _verisons.push_back(version.second->get_value());
     }
     if (_verisons.empty()){
         throw MissingVersions(QString::fromStdWString(_id).toStdString());
@@ -44,20 +42,6 @@ const std::vector<std::wstring> &Mod::get_versions() const
 }
 
 
-int Mod::get_selected_version() const{
-    return _selected_version;
-}
-
-void Mod::set_selected_version(int selected_version){
-    if (0 <= selected_version && selected_version <= _verisons.size()){
-        _selected_version = selected_version;
-    }
-}
-
-const std::wstring &Mod::get_version()
-{
-    return _verisons[_selected_version];
-}
 
 Mod::Type Mod::get_type() const{
     return _type;
@@ -69,3 +53,24 @@ void Mod::add_version(const std::wstring& version) {
         _verisons.push_back(version);
     }
 }
+
+Mod::Mod(const std::wstring &id, const std::wstring &name, const std::vector<std::wstring> &verisons, Mod::Type type)
+        : _id(id), _name(name), _verisons(verisons), _type(type) {}
+
+ModVersion::ModVersion(int id_mod, int id_version) : id_mod(id_mod), id_version(id_version) {}
+
+ModVersion::ModVersion() {
+}
+
+bool ModVersion::operator<(ModVersion other) const {
+    return id_mod < other.id_mod || id_mod == other.id_mod && id_version < other.id_version;
+}
+
+bool ModVersion::operator>(ModVersion other) const {
+    return other < *this;
+}
+
+bool ModVersion::operator==(ModVersion other) const {
+    return id_mod==other.id_mod && id_version == other.id_version;
+}
+

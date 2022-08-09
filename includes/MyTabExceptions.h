@@ -69,5 +69,14 @@ public:
         return name_elem.c_str();
     }
 };
+class MissingAvailableValues : public std::exception{
+    std::string name_elem;
+public:
+    MissingAvailableValues(const std::string& name_elem):name_elem("Отсуствует доступные значения у " + name_elem){
+    }
+    const char* what() const override{
+        return name_elem.c_str();
+    }
+};
 
 #endif // MYTABEXCEPTIONS_H

@@ -29,6 +29,6 @@ public:
     [[nodiscard]] XMLNode const* get_child(const std::wstring& name) const;
     [[nodiscard]] const std::wstring& get_value() const;
     void set_value(std::wstring new_value);
-    void load_to_file(std::wstring_view name, std::wostream& file);
+    void save_to_file(std::wstring_view name, std::wostream& file);
 };
 #endif // XMLNODE_H

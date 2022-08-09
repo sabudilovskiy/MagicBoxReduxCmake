@@ -13,7 +13,7 @@ class XML{
 public:
     XML();
     XML(std::wistream& file);
-    void load_to_file(std::wostream& file);
+    void save_to_file(std::wostream& file);
     XMLNode* add_tag(const std::wstring& tag);
     XMLNode* add_child(std::wstring name);
     [[nodiscard]]  XMLNode* get_tag(const std::wstring& tag);

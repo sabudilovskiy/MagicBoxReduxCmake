@@ -39,7 +39,14 @@ void load_info(QTextEdit* box, XMLNode* root){
     }
     box->setText(QString::fromStdWString(node->get_value()));
 }
-
+void load_info(QComboBox* box, XMLNode* root){
+    auto paths = box->objectName().split('_');
+    XMLNode* node = root;
+    for (auto& path : paths){
+        node = node->get_child(path.toStdWString());
+    }
+    box->setCurrentText(QString::fromStdWString(node->get_value()));
+}
 void store_info(QSpinBox* box, XMLNode* root){
     auto paths = box->objectName().split('_');
     XMLNode* node = root;
@@ -53,7 +60,6 @@ void store_info(QSpinBox* box, XMLNode* root){
     }
     node->add_child(paths[paths.size() - 1].toStdWString(), box->text().toStdWString());
 }
-
 void store_info(QDoubleSpinBox* box, XMLNode* root){
     auto paths = box->objectName().split('_');
     XMLNode* node = root;
@@ -67,7 +73,6 @@ void store_info(QDoubleSpinBox* box, XMLNode* root){
     }
     node->add_child(paths[paths.size() - 1].toStdWString(), box->text().toStdWString());
 }
-
 void store_info(QTextEdit* text_edit, XMLNode* root){
     auto paths = text_edit->objectName().split('_');
     XMLNode* node = root;
@@ -94,20 +99,35 @@ void store_info(QCheckBox* box, XMLNode* root){
     }
     node->add_child(paths[paths.size() - 1].toStdWString(), std::to_wstring(box->isTristate()));
 }
-SettingsWindow::SettingsWindow(std::wstring path, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::SettingsWindow)
+void store_info(QComboBox* box, XMLNode* root){
+    auto paths = box->objectName().split('_');
+    XMLNode* node = root;
+    for (int i = 0; i < paths.size() - 1; i++){
+        auto old_node = node;
+        std::wstring wpath = paths[i].toStdWString();
+        node = old_node->get_child(wpath);
+        if (!node){
+            node = old_node->add_child(wpath);
+        }
+    }
+    node->add_child(paths[paths.size() - 1].toStdWString(), box->currentText().toStdWString());
+}
+SettingsWindow::SettingsWindow(std::wstring path_fl, std::wstring path_file, QWidget *parent) :
+        QWidget(parent),
+        path_fl(path_fl),
+        path_file(path_file),
+        ui(new Ui::SettingsWindow)
 {
     ui->setupUi(this);
-    std::wifstream file(path);
+    std::wifstream file(path_fl);
     file.imbue(std::locale("ru_RU.UTF-8"));
-    if (path.empty()){
+    if (path_fl.empty()){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть файл", "Вы не ввели путь");
         message_box.setFixedSize(300, 200);
         return;
     }
-    if (!std::filesystem::exists(path)){
+    if (!std::filesystem::exists(path_fl)){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть файл", "Файл не существует");
         message_box.setFixedSize(300, 200);
@@ -166,6 +186,15 @@ void SettingsWindow::add_elem(const std::wstring &name, XMLNode &node){
     else if (type == L"Space"){
         found_tab->add_space(name, node);
     }
+    else if (type == L"PathFolder"){
+        text_edits.push_back(found_tab->add_path_folder(name, node));
+    }
+    else if (type == L"PathFile"){
+        text_edits.push_back(found_tab->add_path_file(name, node));
+    }
+    else if (type == L"Enum"){
+        combo_boxes.push_back(found_tab->add_enum(name, node));
+    }
     else throw UnknownTypeSettings();
 }
 
@@ -191,20 +220,19 @@ MyTab* SettingsWindow::find_tab(const std::wstring& key)
 
 void SettingsWindow::on_load_button_clicked()
 {
-    std::wstring wpath = L"C:\\Program Files (x86)\\Steam\\steamapps\\common\\SuperPower 2\\MODS\\1900_HDM_11\\hdm_cfg_server.xml";
-    if (wpath.empty()){
+    if (path_file.empty()){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть файл", "Вы не ввели путь");
         message_box.setFixedSize(300, 200);
         return;
     }
-    if (!std::filesystem::exists(wpath)){
+    if (!std::filesystem::exists(path_file)){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть файл", "Файл не существует");
         message_box.setFixedSize(300, 200);
         return;
     }
-    std::wifstream file(wpath);
+    std::wifstream file(path_file);
     if (!file.is_open()){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть файл", "Недостаточно прав");
@@ -226,19 +254,20 @@ void SettingsWindow::on_load_button_clicked()
     for (auto& i : text_edits){
         load_info(i, node);
     }
+    for (auto& i : combo_boxes){
+        load_info(i, node);
+    }
 }
-
 
 void SettingsWindow::on_save_button_clicked()
 {
-    std::wstring wpath = L"C:\\Program Files (x86)\\Steam\\steamapps\\common\\SuperPower 2\\MODS\\1900_HDM_11\\hdm_cfg_server.xml";
-    if (wpath.empty()){
+    if (path_file.empty()){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть файл", "Вы не ввели путь");
         message_box.setFixedSize(300, 200);
         return;
     }
-    std::wofstream file(wpath);
+    std::wofstream file(path_file);
     if (!file.is_open()){
         QMessageBox message_box;
         message_box.critical(0, "Не возможно открыть или создать файл", "Недостаточно прав");
@@ -260,6 +289,10 @@ void SettingsWindow::on_save_button_clicked()
     for (auto& i : text_edits){
         store_info(i, node);
     }
-    xml.load_to_file(file);
+    for (auto& i : combo_boxes){
+        store_info(i, node);
+    }
+    xml.save_to_file(file);
+    emit resaved_file();
 }
 

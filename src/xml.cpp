@@ -77,7 +77,7 @@ XMLNode* node_from_list(std::vector<XMLItem>& items, int begin = 0, int end = -1
         }
         std::wstring name = items[i].get_info();
         i++;
-        while (i < n && items[i].get_info() != name){
+        while (i < n && !(items[i].get_type()==XMLItem::XMLType::CLOSE_TAG && items[i].get_info() == name)){
             i++;
         }
         if (i >= n || items[i].get_type() != XMLItem::XMLType::CLOSE_TAG){
@@ -103,10 +103,10 @@ XML::XML(std::wistream &file)
     else root = new XMLNode(L"");
 }
 
-void XML::load_to_file(std::wostream &file)
+void XML::save_to_file(std::wostream &file)
 {
     for (auto& child : *root){
-        child.second->load_to_file(child.first, file);
+        child.second->save_to_file(child.first, file);
     }
 }
 
@@ -179,7 +179,8 @@ XMLNode *XML::add_tag(const std::wstring &tag) {
     auto old_node = node;
     while (it!=end){
         std::wstring wtag = it->toStdWString();
-        node = root->get_child(wtag);
+        old_node = node;
+        node = node->get_child(wtag);
         if (!node){
             node = old_node->add_child(wtag);
         }

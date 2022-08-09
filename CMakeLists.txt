@@ -19,7 +19,7 @@ find_package(magic_enum)
 find_package(LibCDS)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
-
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:\\MagicBoxReduxRelease")
 include_directories(includes)
 set(PROJECT_SOURCES
 		src/main.cpp
@@ -29,13 +29,18 @@ set(PROJECT_SOURCES
 		includes/ModServer.h src/ModServer.cpp
 		includes/MyTab.h src/MyTab.cpp
 		includes/MyTabExceptions.h
-        includes/SettingsWindow.h src/SettingsWindow.cpp src/SettingsWindow.ui
-		includes/Support.h
+		includes/SettingsWindow.h src/SettingsWindow.cpp src/SettingsWindow.ui
 		includes/xml.h src/xml.cpp
 		includes/xmlitem.h src/xmlitem.cpp
 		includes/xmlnode.h src/xmlnode.cpp
 		includes/ModController.h src/ModController.cpp
-		src/Downloader.cpp includes/Downloader.h src/ModDownloader.cpp includes/ModDownloader.h src/Support.cpp src/AppSettings.cpp includes/AppSettings.h)
+		includes/Downloader.h src/Downloader.cpp
+		includes/ModDownloader.h src/ModDownloader.cpp
+		includes/Support.h src/Support.cpp
+		includes/AppSettings.h src/AppSettings.cpp
+		includes/ManagerWindow.h src/ManagerWindow.cpp src/ManagerWindow.ui
+		resources/resources.qrc
+        )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MagicBoxReduxCmake

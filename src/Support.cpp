@@ -81,3 +81,4 @@ void utf_8_to_utf_16_bom(const std::wstring &str, std::ofstream &file) {
     file.write((char*)str.c_str(), str.size() * wsize);
     file.close();
 }
+

@@ -10,6 +10,7 @@ void Downloader::download() {
         QNetworkRequest request(cur.url);
         network_access_manager->get(request);
     }
+    else work.store(false);
 }
 void Downloader::downloaded(QNetworkReply* reply) {
     QFile file(QString::fromStdWString(cur.path));

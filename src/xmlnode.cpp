@@ -48,16 +48,22 @@ void XMLNode::add_child(std::wstring name, XMLNode *child){
 
 XMLNode *XMLNode::add_child(std::wstring name)
 {
-    XMLNode* new_node = new XMLNode();
-    _childs.emplace_back(std::move(name), new_node);
-    return new_node;
+    auto node = get_child(name);
+    if (!node){
+        node = new XMLNode();
+        _childs.emplace_back(std::move(name), node);
+    }
+    return node;;
 }
 
 XMLNode *XMLNode::add_child(std::wstring name, std::wstring value)
 {
-    XMLNode* new_node = new XMLNode(std::move(value));
-    _childs.emplace_back(std::move(name), new_node);
-    return new_node;
+    auto node = get_child(name);
+    if (!node){
+         node = new XMLNode(std::move(value));
+        _childs.emplace_back(std::move(name), node);
+    }
+    return node;
 }
 
 XMLNode* XMLNode::get_child(const std::wstring& name)
@@ -79,7 +85,7 @@ void XMLNode::set_value(std::wstring new_value)
     _value = new_value;
 }
 
-void XMLNode::load_to_file(std::wstring_view name, std::wostream &file)
+void XMLNode::save_to_file(std::wstring_view name, std::wostream &file)
 {
     file << L'<';
     file << name;
@@ -88,7 +94,7 @@ void XMLNode::load_to_file(std::wstring_view name, std::wostream &file)
         file << L"\n\n";
         std::sort(_childs.begin(), _childs.end());
         for (auto& child : _childs){
-            child.second->load_to_file(child.first, file);
+            child.second->save_to_file(child.first, file);
             file <<  L"\n";
         }
     }

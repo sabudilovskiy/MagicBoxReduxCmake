@@ -9,6 +9,7 @@
 #include <QDoubleSpinBox>
 #include <QTextEdit>
 #include <QCheckBox>
+#include <QComboBox>
 #include "xmlnode.h"
 
 
@@ -19,6 +20,7 @@ class MyTab{
     QWidget* scroll_area_contents;
     QFormLayout* form_layout;
     int count;
+    std::vector<std::function<void()>> buttons;
 protected:
     void add_label(const std::wstring& name, XMLNode& node);
 public:
@@ -28,6 +30,9 @@ public:
     QTextEdit* add_string(const std::wstring& name, XMLNode& node);
     QCheckBox* add_boolean(const std::wstring& name, XMLNode& node);
     QDoubleSpinBox* add_double(const std::wstring& name, XMLNode& node);
+    QTextEdit* add_path_folder(const std::wstring& name, XMLNode& node);
+    QTextEdit* add_path_file(const std::wstring& name, XMLNode& node);
+    QComboBox* add_enum(const std::wstring& name, XMLNode& node);
     void add_space(const std::wstring& name, XMLNode& node);
 };
 

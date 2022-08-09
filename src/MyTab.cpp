@@ -1,5 +1,7 @@
 #include "MyTab.h"
 #include "MyTabExceptions.h"
+#include <QToolButton>
+#include <QFileDialog>
 void MyTab::add_label(const std::wstring &name, XMLNode &node){
     auto type_node = node.get_child(L"type");
     if (!type_node) throw MissingType(QString::fromStdWString(name).toStdString());
@@ -64,21 +66,6 @@ QSpinBox *MyTab::add_integer(const std::wstring &name, XMLNode &node){
     return field;
 }
 
-QTextEdit *MyTab::add_string(const std::wstring &name, XMLNode &node){
-    add_label(name, node);
-    QString qname = QString::fromStdWString(name);
-
-    auto default_node = node.get_child(L"default");
-    if (!default_node) throw MissingDefault(QString::fromStdWString(name).toStdString());
-    std::wstring default_value = default_node->get_value();
-
-    QTextEdit* field = new QTextEdit(scroll_area_contents);
-    field->setObjectName(qname);
-    form_layout->setWidget(count, QFormLayout::FieldRole, field);
-    count++;
-    return field;
-}
-
 QCheckBox *MyTab::add_boolean(const std::wstring &name, XMLNode &node){
     add_label(name, node);
     QString qname = QString::fromStdWString(name);
@@ -129,3 +116,88 @@ void MyTab::add_space(const std::wstring &name, XMLNode &node){
     form_layout->setItem(count, QFormLayout::FieldRole, field);
     count++;
 }
+QTextEdit *MyTab::add_string(const std::wstring &name, XMLNode &node){
+    add_label(name, node);
+    QString qname = QString::fromStdWString(name);
+    auto default_node = node.get_child(L"default");
+    if (!default_node) throw MissingDefault(QString::fromStdWString(name).toStdString());
+    std::wstring default_value = default_node->get_value();
+    QTextEdit* field = new QTextEdit(scroll_area_contents);
+    field->setObjectName(QString::fromStdWString(name));
+    field->setMinimumHeight(24);
+    field->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    field->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    field->setLineWrapMode(QTextEdit::FixedPixelWidth);
+    field->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
+    field->setObjectName(qname);
+    form_layout->setWidget(count, QFormLayout::FieldRole, field);
+    count++;
+    return field;
+}
+
+
+QTextEdit *MyTab::add_path_folder(const std::wstring &name, XMLNode &node) {
+    add_label(name, node);
+    QHBoxLayout* layout = new QHBoxLayout();
+    QTextEdit* field = new QTextEdit(scroll_area_contents);
+    field->setObjectName(QString::fromStdWString(name));
+    field->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
+    field->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    field->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    field->setLineWrapMode(QTextEdit::NoWrap);
+    QToolButton* tool_button = new QToolButton(scroll_area_contents);
+    tool_button->setText("...");
+    layout->addWidget(field);
+    layout->addWidget(tool_button);
+    auto it = buttons.emplace_back([field, this]() -> void {
+        field->setText(QFileDialog::getExistingDirectory(this->scroll_area_contents,"Выберите папку"));
+    });
+    form_layout->setLayout(count, QFormLayout::FieldRole, layout);
+    QObject::connect(tool_button,  &QToolButton::clicked, it);
+    count++;
+    return field;
+}
+
+QTextEdit *MyTab::add_path_file(const std::wstring &name, XMLNode &node) {
+    add_label(name, node);
+    QHBoxLayout* layout = new QHBoxLayout();
+    QTextEdit* field = new QTextEdit(scroll_area_contents);
+    field->setObjectName(QString::fromStdWString(name));
+    field->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
+    field->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    field->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    field->setLineWrapMode(QTextEdit::NoWrap);
+    QToolButton* tool_button = new QToolButton(scroll_area_contents);
+    tool_button->setText("...");
+    layout->addWidget(field);
+    layout->addWidget(tool_button);
+    auto it = buttons.emplace_back([field, this]() -> void {
+        field->setText(QFileDialog::getOpenFileName(this->scroll_area_contents,"Выберите файл"));
+    });
+    form_layout->setLayout(count, QFormLayout::FieldRole, layout);
+    QObject::connect(tool_button,  &QToolButton::clicked, it);
+    count++;
+    return field;
+}
+
+QComboBox *MyTab::add_enum(const std::wstring &name, XMLNode &node) {
+    add_label(name, node);
+    QString qname = QString::fromStdWString(name);
+    QComboBox* field = new QComboBox(scroll_area_contents);
+    auto available_values = node.get_child(L"availableValues");
+    if (!available_values) throw MissingAvailableValues(QString::fromStdWString(name).toStdString());
+    for (auto& value : *available_values){
+        field->addItem(QString::fromStdWString(value.second->get_value()));
+    }
+    auto default_node = node.get_child(L"default");
+    if (!default_node) throw MissingDefault(QString::fromStdWString(name).toStdString());
+    std::wstring default_value = default_node->get_value();
+    field->setObjectName(QString::fromStdWString(name));
+    field->setMinimumHeight(24);
+    field->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
+    field->setObjectName(qname);
+    form_layout->setWidget(count, QFormLayout::FieldRole, field);
+    count++;
+    return field;
+}
+
