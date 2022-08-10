@@ -179,20 +179,24 @@ void ModDownloader::update_downloaded() {
     auto it_installed_mods = mod_controller.get_mods_db().begin(), end_installed_mods = mod_controller.get_mods_db().end();
     auto it_server_mods = mods_db.begin(), end_server_mods = mods_db.end();
     while (it_server_mods!=end_server_mods && it_installed_mods!=end_installed_mods){
-        while (it_server_mods!=end_server_mods && it_server_mods->get_id() < it_installed_mods->get_id() ){
-            it_server_mods++;
+        if (it_server_mods->get_id() < it_installed_mods->get_id() ){
+            while (it_server_mods!=end_server_mods && it_server_mods->get_id() < it_installed_mods->get_id() ){
+                it_server_mods++;
+            }
         }
-        if (it_server_mods->get_id() == it_installed_mods->get_id()){
+        else if (it_server_mods->get_id() == it_installed_mods->get_id()){
             size_t n = it_server_mods->get_versions().size();
             for (size_t i = 0; i < n; i++){
                 if (include(it_installed_mods->get_versions(), it_server_mods->get_versions()[i])){
                     it_server_mods->get_installed()[i] = true;
                 }
             }
+            it_server_mods++;
         }
-        it_server_mods++;
-        while(it_installed_mods!=end_installed_mods &&it_server_mods->get_id() > it_installed_mods->get_id()){
-            it_installed_mods++;
+        else{
+            while(it_installed_mods!=end_installed_mods &&it_server_mods->get_id() > it_installed_mods->get_id()){
+                it_installed_mods++;
+            }
         }
     }
 }

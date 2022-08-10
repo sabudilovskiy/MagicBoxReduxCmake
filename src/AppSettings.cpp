@@ -33,12 +33,11 @@ AppSettings::AppSettings() {
                                       L"https://www.dropbox.com/s/3k8tf3r1d1o2s8z/ModDownloader.ini?dl=1",
                                       L"downloader_tab"));
     settings.emplace_back(new EnumSetting(L"Скачивание установленных модов",
-                                          L"",
-                                          L"",
-                                          L"",
-                                          L"",
-                                          {}
-            ));
+                                          L"policies_downloadInstalledMods",
+                                          L"Enum",
+                                          L"ASK",
+                                          L"downloader_tab",
+                                          {L"SKIP", L"REINSTALL", L"ASK"}));
     tabs.emplace_back(L"main_tab",
                       L"Основные настройки");
     tabs.emplace_back(L"downloader_tab",
