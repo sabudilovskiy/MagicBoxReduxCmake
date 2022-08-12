@@ -13,8 +13,28 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">border-collapse: collapse;
+padding: 0;
+margin: 0;</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -147,16 +167,34 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <widget class="QPushButton" name="pushButton_reinstall">
+       <widget class="QPushButton" name="pushButton_reinstall_set">
         <property name="text">
          <string>Переустановить сборку</string>
         </property>
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButton_delete_set">
+        <property name="text">
+         <string>Удалить сборку</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_config_set">
+        <property name="text">
+         <string>Настроить SDK сборки</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
        <widget class="QPushButton" name="pushButton_settings">
         <property name="text">
-         <string>Опции </string>
+         <string>Настройки лаунчера</string>
         </property>
        </widget>
       </item>

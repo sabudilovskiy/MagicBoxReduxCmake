@@ -52,6 +52,8 @@ public:
     dhash_t add_download(const QUrl& url, const std::wstring& path);
 signals:
     void downloaded_file(dhash_t hash_item, dnetwork_error network_err, dfile_error file_err );
+    void start_downloading(dhash_t hash_item);
+    void downloaded_progress(qint64 byteRecd, quint64 bytesTotal);
 private slots:
     void download();
     void downloaded(QNetworkReply* reply);

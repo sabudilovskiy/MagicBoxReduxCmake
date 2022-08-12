@@ -193,3 +193,12 @@ XMLNode *XML::add_child(std::wstring name) {
     return root->add_child(std::move(name));
 }
 
+XML::XML(XML &&another) : root(another.root){
+    another.root = nullptr;
+}
+
+XML &XML::operator=(XML &&another) {
+    std::swap(root, another.root);
+    return *this;
+}
+

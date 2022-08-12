@@ -79,4 +79,14 @@ public:
     }
 };
 
+class MissingFile: public std::exception{
+    std::string name_elem;
+public:
+    MissingFile(const std::string& name_elem):name_elem("Отсуствует название файла " + name_elem){
+    }
+    const char* what() const override{
+        return name_elem.c_str();
+    }
+};
+
 #endif // MYTABEXCEPTIONS_H

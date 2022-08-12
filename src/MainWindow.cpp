@@ -43,32 +43,31 @@ void MainWindow::on_rightClicked_sdk(const QPoint &pos) {
 
 }
 
-void MainWindow::on_pushButton_reinstall_clicked() {
-
+void MainWindow::on_pushButton_reinstall_set_clicked() {
+    auto [db_id, sdk_id] = get_set();
+    if (db_id == -1){
+        return;
+    }
+    std::wstring full_path = app_settings.get_setting(L"path_game");
+    full_path+=L"/MODS/";
+    full_path+=mod_controller.get_name_folder(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
+    if (std::filesystem::exists(full_path)){
+        std::filesystem::remove_all(full_path);
+    }
+    mod_controller.install_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
+    QString text = "Сборка состоящая из ";
+    text += ui->db_listWidget->item(db_id)->text();
+    text += " и ";
+    text += ui->sdk_listWidget->item(sdk_id)->text();
+    text += " успешна переустановлена";
+    QMessageBox::information(this, "Переустановлена сборка", text);
 }
 
 void MainWindow::on_pushButton_start_clicked() {
-    auto _db = ui->db_listWidget->selectedItems();
-    auto _sdk = ui->sdk_listWidget->selectedItems();
-    if (_db.size() != 1 && _sdk.size() != 1){
-        auto* message_box = new QMessageBox();
-        if (_db.empty()){
-            message_box->critical(this, "Ошибка", "Вы не выбрали DB мод");
-        }
-        else if (_sdk.size() == 0){
-            message_box->critical(this, "Ошибка", "Вы не выбрали SDK мод");
-        }
-        else if (_db.size() > 1){
-            message_box->critical(this, "Ошибка", "Вы выбрали больше одного DB мода");
-        }
-        else {
-            message_box->critical(this, "Ошибка", "Вы не выбрали DB мод");
-        }
-        message_box->exec();
+    auto [db_id, sdk_id] = get_set();
+    if (db_id == -1){
         return;
     }
-    int db_id =  ui->db_listWidget->row(_db[0]);
-    int sdk_id = ui->sdk_listWidget->row(_sdk[0]);
     if (!mod_controller.exists_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id])){
         mod_controller.install_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
     }
@@ -81,27 +80,10 @@ void MainWindow::on_pushButton_start_clicked() {
 
 void MainWindow::on_pushButton_server_clicked()
 {
-    auto _db = ui->db_listWidget->selectedItems();
-    auto _sdk = ui->sdk_listWidget->selectedItems();
-    if (_db.size() != 1 && _sdk.size() != 1){
-        auto* message_box = new QMessageBox();
-        if (_db.empty()){
-            message_box->critical(this, "Ошибка", "Вы не выбрали DB мод");
-        }
-        else if (_sdk.size() == 0){
-            message_box->critical(this, "Ошибка", "Вы не выбрали SDK мод");
-        }
-        else if (_db.size() > 1){
-            message_box->critical(this, "Ошибка", "Вы выбрали больше одного DB мода");
-        }
-        else {
-            message_box->critical(this, "Ошибка", "Вы не выбрали DB мод");
-        }
-        message_box->exec();
+    auto [db_id, sdk_id] = get_set();
+    if (db_id == -1){
         return;
     }
-    int db_id =  ui->db_listWidget->row(_db[0]);
-    int sdk_id = ui->sdk_listWidget->row(_sdk[0]);
     if (!mod_controller.exists_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id])){
         mod_controller.install_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
     }
@@ -116,9 +98,9 @@ void MainWindow::on_pushButton_settings_clicked()
     if (!std::filesystem::exists(L"options.fl")){
         app_settings.generate_fl_file();
     }
-    SettingsWindow* settings_window = new SettingsWindow(L"settings.fl", L"settings.ini");
-    QObject::connect(settings_window, &SettingsWindow::resaved_file, &app_settings, &AppSettings::load);
-    settings_window->show();
+    _settings_window = new SettingsWindow(L"", L"settings.fl");
+    QObject::connect(_settings_window, &SettingsWindow::resaved_file, &app_settings, &AppSettings::load);
+    _settings_window->show();
 }
 
 
@@ -173,5 +155,53 @@ void MainWindow::reload_sdk() {
         }
         i++;
     }
+}
+
+
+void MainWindow::on_pushButton_config_set_clicked()
+{
+    auto [db_id, sdk_id] = get_set();
+    if (db_id == -1){
+        return;
+    }
+    if (!mod_controller.exists_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id])){
+        mod_controller.install_mods(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
+    }
+    close_settings_window();
+    std::wstring full_path = app_settings.get_setting(L"path_game");
+    full_path+=L"/MODS/";
+    full_path+=mod_controller.get_name_folder(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
+    _settings_window = new SettingsWindow(full_path, L"mod.fl");
+    _settings_window->show();
+}
+
+std::pair<int, int> MainWindow::get_set() {
+    auto _db = ui->db_listWidget->selectedItems();
+    auto _sdk = ui->sdk_listWidget->selectedItems();
+    if (_db.size() != 1 || _sdk.size() != 1){
+        auto* message_box = new QMessageBox();
+        if (_db.empty()){
+            message_box->critical(this, "Ошибка", "Вы не выбрали DB мод");
+        }
+        else if (_sdk.size() == 0){
+            message_box->critical(this, "Ошибка", "Вы не выбрали SDK мод");
+        }
+        else if (_db.size() > 1){
+            message_box->critical(this, "Ошибка", "Вы выбрали больше одного DB мода");
+        }
+        else {
+            message_box->critical(this, "Ошибка", "Вы не выбрали DB мод");
+        }
+        return {-1, -1};
+    }
+    return {ui->db_listWidget->row(_db[0]), ui->sdk_listWidget->row(_sdk[0])};
+}
+
+void MainWindow::close_settings_window() {
+    if (!_settings_window){
+        return;
+    }
+    delete _settings_window;
+    _settings_window = nullptr;
 }
 

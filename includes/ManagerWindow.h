@@ -26,12 +26,14 @@ public:
 protected:
     void add_downloading();
     void add_downloaded();
-    void update_progress_bar();
+    void update_mod_progress_bar();
 protected slots:
     int get_index(DOWNLOAD_INFO mod) const;
     void update_settings();
     void update_mod();
     void on_pushButton_download_clicked();
+    void update_bytes_progress_bar(qint64 downloaded_bytes, qint64 total_bytes);
+    void downloading_mod(DOWNLOAD_INFO mod);
     void downloaded_mod(DOWNLOAD_INFO mod, dnetwork_error network_err, dfile_error file_err);
 };
 

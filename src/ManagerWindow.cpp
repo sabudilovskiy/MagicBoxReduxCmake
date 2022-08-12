@@ -15,18 +15,27 @@ ManagerWindow::ManagerWindow(const AppSettings& app_settings, ModDownloader &mod
         _mod_downloader(mod_downloader),
         ui(new Ui::ManagerWindow)
 {
+    ui->setupUi(this);
     QObject::connect(&mod_downloader, &ModDownloader::refreshed_list, this, &ManagerWindow::update_mod);
     update_mod();
+    update_settings();
     QObject::connect(&mod_downloader, &ModDownloader::signal_downloaded_mod, this, &ManagerWindow::downloaded_mod);
-    ui->setupUi(this);
+    QObject::connect(&mod_downloader, &ModDownloader::downloading_progress, this, &ManagerWindow::update_bytes_progress_bar);
+    QObject::connect(&mod_downloader, &ModDownloader::signal_downloading_mod, this, &ManagerWindow::downloading_mod);
+    QObject::connect(&mod_downloader, &ModDownloader::refreshed_list, this, &ManagerWindow::update_mod);
+    QObject::connect(&app_settings, &AppSettings::change_settings, this, &ManagerWindow::update_settings);
 }
 
 
 void ManagerWindow::update_mod() {
     auto count_db = _mod_downloader.get_mods_db().size();
     auto count_sdk = _mod_downloader.get_mods_sdk().size();
+    _mods_db.clear();
+    _mods_sdk.clear();
     _mods_db.reserve(count_db);
     _mods_sdk.reserve(count_sdk);
+    ui->listWidget_db->clear();
+    ui->listWidget_sdk->clear();
     int id_mod = 0;
     for (auto& mod : _mod_downloader.get_mods_db()){
         int id_version = 0;
@@ -89,7 +98,7 @@ void ManagerWindow::on_pushButton_download_clicked()
                     {
                         QMessageBox msgBox;
                         msgBox.setText("Обнаружен уже установленный мод");
-                        msgBox.setInformativeText("Вы хотите переустановить данный мод?");
+                        msgBox.setInformativeText("Вы хотите переустановить " + item_db->text() + " ?");
                         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                         msgBox.setDefaultButton(QMessageBox::No);
                         int ret = msgBox.exec();
@@ -122,7 +131,7 @@ void ManagerWindow::on_pushButton_download_clicked()
                 {
                     QMessageBox msgBox;
                     msgBox.setText("Обнаружен уже установленный мод");
-                    msgBox.setInformativeText("Вы хотите переустановить данный мод?");
+                    msgBox.setInformativeText("Вы хотите переустановить " + item_sdk->text() + " ?");
                     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                     msgBox.setDefaultButton(QMessageBox::No);
                     int ret = msgBox.exec();
@@ -161,14 +170,13 @@ void ManagerWindow::downloaded_mod(DOWNLOAD_INFO mod, dnetwork_error network_err
             text += QString::fromStdString(std::string(magic_enum::enum_name(file_err).data()));
         }
     }
-    ui->label_download_mod->setText(text);
+    ui->label_downloaded_mod->setText(text);
     add_downloaded();
 }
 
 void ManagerWindow::update_settings() {
     _installed_policy = magic_enum::enum_cast<InstalledPolicy>(string_from_wstring(_app_settings.get_setting(L"policies_downloadInstalledMods"))).value();
 }
-
 
 void ManagerWindow::add_downloading() {
     if (_downloaded == _downloading){
@@ -178,12 +186,12 @@ void ManagerWindow::add_downloading() {
     else {
         ++_downloading;
     }
-    update_progress_bar();
+    update_mod_progress_bar();
 }
 
 void ManagerWindow::add_downloaded() {
     ++_downloaded;
-    update_progress_bar();
+    update_mod_progress_bar();
 }
 
  int ManagerWindow::get_index(DOWNLOAD_INFO mod) const{
@@ -192,10 +200,57 @@ void ManagerWindow::add_downloaded() {
     return std::distance(mods.begin(), std::find(mods.begin(),  mods.end(), mod_version));
 }
 
-void ManagerWindow::update_progress_bar() {
-    ui->progressBar->setMaximum(_downloading);
-    ui->progressBar->setValue(_downloaded);
-    ui->label_progress->setText(QString::number(_downloaded) + "/" + QString::number(_downloading));
+void ManagerWindow::update_mod_progress_bar() {
+    ui->progressBar_mods->setMaximum(_downloading);
+    ui->progressBar_mods->setValue(_downloaded);
+    ui->label_mods->setText(QString::number(_downloaded) + "/" + QString::number(_downloading));
+}
+
+void ManagerWindow::downloading_mod(DOWNLOAD_INFO mod) {
+    auto& list = mod.type == Mod::DB ? ui->listWidget_db: ui->listWidget_sdk;
+    auto item = list->item(get_index(mod));
+    QString text = "Скачивается: ";
+    text+=item->text();
+    ui->label_downloading_mod->setText(text);
+}
+
+void ManagerWindow::update_bytes_progress_bar(qint64 downloaded_bytes, qint64 total_bytes) {
+    if (total_bytes == -1){
+        return;
+    }
+    if (downloaded_bytes == -1){
+        downloaded_bytes = 0;
+    }
+    QString after;
+    double total;
+    double downloaded;
+    if (total_bytes > 1024 * 1024 * 10){
+        total = total_bytes/1024/1024;
+        total = std::round(total*10)/10;
+        downloaded = downloaded_bytes/1024/1024;
+        downloaded = round(downloaded*10)/10;
+        after = "MB";
+    }
+    else if (total_bytes > 1024 * 10){
+        total = total_bytes/1024;
+        total = std::round(total*10)/10;
+        downloaded = downloaded_bytes/1024;
+        downloaded = round(downloaded*10)/10;
+        after = "KB";
+    }
+    else{
+        downloaded = downloaded_bytes;
+        total = total_bytes;
+        after = "B";
+    }
+    QString text = QString::number(downloaded);
+    text += '/';
+    text += QString::number(total);
+    text += ' ';
+    text += after;
+    ui->label_bytes->setText(text);
+    ui->progressBar_bytes->setMaximum(total);
+    ui->progressBar_bytes->setValue(downloaded);
 }
 
 

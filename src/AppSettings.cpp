@@ -73,6 +73,8 @@ void AppSettings::generate_fl_file() {
     if (file.is_open()){
         file.imbue(std::locale("ru_RU.UTF-8"));
         XML xml;
+        auto node_files = xml.add_tag(L"files");
+        node_files->add_child(L"1", L"settings.ini");
         auto node_tabs = xml.add_tag(L"tabs");
         for (auto& i : tabs){
             auto node = node_tabs->add_child(i.id);
@@ -94,4 +96,45 @@ AppSettings::Setting::Setting(const std::wstring &title, const std::wstring &tag
                               const std::wstring &value,
                               const std::wstring &tab) : title(title), tag(tag), type(type), value(value), tab(tab) {}
 
+void AppSettings::Setting::generate_fl(XMLNode &node_elems) {
+    auto node = node_elems.add_child(tag);
+    node->add_child(L"type", type);
+    node->add_child(L"default", value);
+    node->add_child(L"tab", tab);
+    node->add_child(L"title", title);
+    node->add_child(L"file", L"settings.ini");
+}
+
+void AppSettings::Setting::save_to_xml(XML &xml) const {
+    auto node = xml.add_tag(tag);
+    node->change_type(XMLNodeType::VALUE);
+    node->set_value(value);
+}
+
+void AppSettings::Setting::load_from_xml(const XML &xml) {
+    auto node = xml.get_tag(tag);
+    if (node && node->get_type() == XMLNodeType::VALUE){
+        value = node->get_value();
+    }
+}
+
 AppSettings::Tab::Tab(const std::wstring &id, const std::wstring &title) : id(id), title(title) {}
+
+void AppSettings::EnumSetting::generate_fl(XMLNode &node_elems) {
+    auto node = node_elems.add_child(tag);
+    node->add_child(L"type", type);
+    node->add_child(L"default", value);
+    node->add_child(L"tab", tab);
+    node->add_child(L"title", title);
+    node->add_child(L"file", L"settings.ini");
+    auto node_availableValues = node->add_child(L"availableValues");
+    int i = 0;
+    for (auto & availableValue : available_values){
+        node_availableValues->add_child(std::to_wstring(i), availableValue);
+        ++i;
+    }
+}
+
+AppSettings::EnumSetting::EnumSetting(const std::wstring &title, const std::wstring &tag, const std::wstring &type,
+                                      const std::wstring &value, const std::wstring &tab,
+                                      std::vector<std::wstring> available_values) : Setting(title, tag, type, value, tab), available_values(available_values){}

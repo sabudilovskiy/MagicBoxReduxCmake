@@ -12,6 +12,8 @@ class XML{
     XMLNode* root;
 public:
     XML();
+    XML (XML&& another);
+    XML& operator= (XML&& another);
     XML(std::wistream& file);
     void save_to_file(std::wostream& file);
     XMLNode* add_tag(const std::wstring& tag);

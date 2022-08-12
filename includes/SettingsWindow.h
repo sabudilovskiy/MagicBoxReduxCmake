@@ -18,16 +18,18 @@ class UnknownTab : public std::exception{
 class SettingsWindow : public QWidget
 {
     Q_OBJECT
-    std::vector<QSpinBox*> spin_boxes;
-    std::vector<QCheckBox*> check_boxes;
-    std::vector<QTextEdit*> text_edits;
-    std::vector<QDoubleSpinBox*> double_spin_boxes;
-    std::vector<QComboBox*> combo_boxes;
-    std::unordered_map<std::wstring, MyTab> tabs;
-    std::wstring path_fl;
-    std::wstring path_file;
+    std::vector<QSpinBox*> _spin_boxes;
+    std::vector<QCheckBox*> _check_boxes;
+    std::vector<QTextEdit*> _text_edits;
+    std::vector<QDoubleSpinBox*> _double_spin_boxes;
+    std::vector<QComboBox*> _combo_boxes;
+    std::unordered_map<std::wstring, MyTab> _tabs;
+    std::wstring _name_fl;
+    std::wstring _name_file;
+    std::wstring _dir;
+    std::vector<QString> _files;
 public:
-    explicit SettingsWindow(std::wstring path_fl, std::wstring path_file, QWidget *parent = nullptr);
+    explicit SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *parent = nullptr);
     ~SettingsWindow();
     void add_elem(const std::wstring& name, XMLNode& node);
     MyTab* add_tab(std::wstring name, XMLNode& node);

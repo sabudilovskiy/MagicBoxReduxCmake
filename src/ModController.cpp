@@ -10,8 +10,8 @@ namespace fs = std::filesystem;
 void ModController::install_mods(ModVersion db, ModVersion sdk) {
     try{
         std::wstring path = this->path_game + L"\\MODS\\" + get_name_folder(db, sdk);
-        std::wstring path_db = L"C:\\MagicBoxReduxRelease\\mods\\db\\" + mods_db[db.id_mod].get_id() + L"\\" + mods_db[db.id_mod].get_versions()[db.id_version];
-        std::wstring path_sdk = L"C:\\MagicBoxReduxRelease\\mods\\sdk\\" + mods_sdk[sdk.id_mod].get_id() + L"\\" + mods_sdk[sdk.id_mod].get_versions()[db.id_version];
+        std::wstring path_db =  L"mods\\DB\\" + mods_db[db.id_mod].get_id() + L"\\" + mods_db[db.id_mod].get_versions()[db.id_version];
+        std::wstring path_sdk = L"mods\\SDK\\" + mods_sdk[sdk.id_mod].get_id() + L"\\" + mods_sdk[sdk.id_mod].get_versions()[sdk.id_version];
         if (!std::filesystem::exists(path)){
             std::filesystem::create_directories(path);
         }
@@ -147,6 +147,17 @@ void ModController::save_to_xml( XML &xml) {
         auto mod_node = node_mods->add_child(mod.get_id());
         mod_node->add_child(L"name", mod.get_name());
         mod_node->add_child(L"type", L"DB");
+        auto mod_versions = mod_node->add_child(L"versions");
+        int i = 0;
+        for (auto &version : mod.get_versions()){
+            mod_versions->add_child(std::to_wstring(i), version);
+            ++i;
+        }
+    }
+    for (auto & mod : mods_sdk){
+        auto mod_node = node_mods->add_child(mod.get_id());
+        mod_node->add_child(L"name", mod.get_name());
+        mod_node->add_child(L"type", L"SDK");
         auto mod_versions = mod_node->add_child(L"versions");
         int i = 0;
         for (auto &version : mod.get_versions()){

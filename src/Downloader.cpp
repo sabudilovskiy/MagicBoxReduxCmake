@@ -8,11 +8,14 @@ void Downloader::download() {
     if (!items.empty()){
         items.pop_front(cur);
         QNetworkRequest request(cur.url);
-        network_access_manager->get(request);
+        emit start_downloading(cur.hash);
+        auto reply = network_access_manager->get(request);
+        QObject::connect(reply, &QNetworkReply::downloadProgress, this, &Downloader::downloaded_progress);
     }
     else work.store(false);
 }
 void Downloader::downloaded(QNetworkReply* reply) {
+    QObject::disconnect(reply, &QNetworkReply::downloadProgress, this, &Downloader::downloaded_progress);
     QFile file(QString::fromStdWString(cur.path));
     std::wstring folder = get_folder(cur.path);
     if (!std::filesystem::exists(folder)){
@@ -49,3 +52,7 @@ dhash_t Downloader::add_download(const QUrl &url, const std::wstring & path) {
     if (!work.exchange(true)) emit download();
     return hash_item;
 }
+
+//void Downloader::download_bytes(qint64 byteRecd, quint64 bytesTotal) {
+//    emit downloaded_progress(byteRecd, bytesTotal);
+//}
