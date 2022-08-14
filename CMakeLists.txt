@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(MagicBoxReduxCmake VERSION 0.1 LANGUAGES CXX)
-
-set(CMAKE_PREFIX_PATH "C:/Qt/6.3.1/msvc2019_64/lib/cmake")
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+set(CMAKE_PREFIX_PATH "C:/Qt5/5.15.2/msvc2019_64/lib/cmake")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -11,8 +12,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CONAN_DISABLE_CHECK_COMPILER TRUE)
 include(libraries/conan_paths.cmake)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Network)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt5 REQUIRED COMPONENTS Network)
 find_package(xxHash)
 find_package(libzippp)
 find_package(magic_enum)
@@ -22,24 +23,24 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:\\MagicBoxReduxRelease")
 include_directories(includes)
 set(PROJECT_SOURCES
-		src/main.cpp
-		includes/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
-		includes/Mod.h src/Mod.cpp
-		includes/ModExceptions.h
-		includes/ModServer.h src/ModServer.cpp
-		includes/MyTab.h src/MyTab.cpp
-		includes/MyTabExceptions.h
-		includes/SettingsWindow.h src/SettingsWindow.cpp src/SettingsWindow.ui
-		includes/xml.h src/xml.cpp
-		includes/xmlitem.h src/xmlitem.cpp
-		includes/xmlnode.h src/xmlnode.cpp
-		includes/ModController.h src/ModController.cpp
-		includes/Downloader.h src/Downloader.cpp
-		includes/ModDownloader.h src/ModDownloader.cpp
-		includes/Support.h src/Support.cpp
-		includes/AppSettings.h src/AppSettings.cpp
-		includes/ManagerWindow.h src/ManagerWindow.cpp src/ManagerWindow.ui
-		resources/resources.qrc
+                src/main.cpp
+                includes/MainWindow.h src/MainWindow.cpp src/MainWindow.ui
+                includes/Mod.h src/Mod.cpp
+                includes/ModExceptions.h
+                includes/ModServer.h src/ModServer.cpp
+                includes/MyTab.h src/MyTab.cpp
+                includes/MyTabExceptions.h
+                includes/SettingsWindow.h src/SettingsWindow.cpp src/SettingsWindow.ui
+                includes/xml.h src/xml.cpp
+                includes/xmlitem.h src/xmlitem.cpp
+                includes/xmlnode.h src/xmlnode.cpp
+                includes/ModController.h src/ModController.cpp
+                includes/Downloader.h src/Downloader.cpp
+                includes/ModDownloader.h src/ModDownloader.cpp
+                includes/Support.h src/Support.cpp
+                includes/AppSettings.h src/AppSettings.cpp
+                includes/ManagerWindow.h src/ManagerWindow.cpp src/ManagerWindow.ui
+                resources/resources.qrc
         )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

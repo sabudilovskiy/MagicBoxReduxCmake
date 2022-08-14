@@ -11,7 +11,6 @@
 #include <QList>
 #include <QObject>
 #include "xml.h"
-
 class AppSettings : public QObject{
 public:
     struct Setting{

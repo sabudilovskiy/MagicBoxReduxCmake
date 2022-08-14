@@ -1,4 +1,5 @@
 #include <QFile>
+#include <filesystem>
 #include "Downloader.h"
 #include "Support.h"
 dhash_t dhash64(const std::wstring& str){

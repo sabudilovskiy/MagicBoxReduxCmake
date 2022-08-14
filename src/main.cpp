@@ -3,14 +3,9 @@
 #include <QApplication>
 #include "AppSettings.h"
 #include "Downloader.h"
-#include "Support.h"
 #include "ModDownloader.h"
 #include "MainWindow.h"
 #include "Mod.h"
-#include <string>
-#include <magic_enum.hpp>
-#include <iostream>
-#include <QLibraryInfo>
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);

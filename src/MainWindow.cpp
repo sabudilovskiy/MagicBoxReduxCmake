@@ -26,6 +26,8 @@ MainWindow::MainWindow(AppSettings &app_settings, Downloader &downloader, QWidge
     reload_mods();
     QObject::connect(&mod_controller, &ModController::change_db, this, &MainWindow::reload_db);
     QObject::connect(&mod_controller, &ModController::change_sdk, this, &MainWindow::reload_sdk);
+    QObject::connect(ui->toolButton_minimize, &QToolButton::clicked, this, &MainWindow::showMinimized);
+    QObject::connect(ui->toolButton_exit, &QToolButton::clicked, this, &MainWindow::close);
 }
 
 MainWindow::~MainWindow()
@@ -43,7 +45,7 @@ void MainWindow::on_rightClicked_sdk(const QPoint &pos) {
 
 }
 
-void MainWindow::on_pushButton_reinstall_set_clicked() {
+void MainWindow::on_toolButton_set_reinstall_clicked() {
     auto [db_id, sdk_id] = get_set();
     if (db_id == -1){
         return;
@@ -63,7 +65,7 @@ void MainWindow::on_pushButton_reinstall_set_clicked() {
     QMessageBox::information(this, "Переустановлена сборка", text);
 }
 
-void MainWindow::on_pushButton_start_clicked() {
+void MainWindow::on_pushButton_start_game_clicked() {
     auto [db_id, sdk_id] = get_set();
     if (db_id == -1){
         return;
@@ -78,7 +80,7 @@ void MainWindow::on_pushButton_start_clicked() {
 }
 
 
-void MainWindow::on_pushButton_server_clicked()
+void MainWindow::on_pushButton_start_server_clicked()
 {
     auto [db_id, sdk_id] = get_set();
     if (db_id == -1){
@@ -158,7 +160,7 @@ void MainWindow::reload_sdk() {
 }
 
 
-void MainWindow::on_pushButton_config_set_clicked()
+void MainWindow::on_toolButton_set_config_clicked()
 {
     auto [db_id, sdk_id] = get_set();
     if (db_id == -1){
@@ -203,5 +205,38 @@ void MainWindow::close_settings_window() {
     }
     delete _settings_window;
     _settings_window = nullptr;
+}
+
+void MainWindow::on_toolButton_set_delete_clicked() {
+    auto [db_id, sdk_id] = get_set();
+    if (db_id == -1){
+        return;
+    }
+    std::wstring full_path = app_settings.get_setting(L"path_game");
+    full_path+=L"/MODS/";
+    full_path+=mod_controller.get_name_folder(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
+    if (std::filesystem::exists(full_path)){
+        std::error_code errc;;
+        std::filesystem::remove_all(full_path,errc);
+        if (errc){
+            QMessageBox::critical(this, "Ошибка", QString::fromStdString(errc.message()));
+        }
+        else{
+            QString text = "Сборка состоящая из ";
+            text += ui->db_listWidget->item(db_id)->text();
+            text += " и ";
+            text += ui->sdk_listWidget->item(sdk_id)->text();
+            text += " успешна удалена";
+            QMessageBox::information(this, "Удалена сборка", std::move(text));
+        }
+    }
+    else{
+        QString text = "Сборка состоящая из ";
+        text += ui->db_listWidget->item(db_id)->text();
+        text += " и ";
+        text += ui->sdk_listWidget->item(sdk_id)->text();
+        text += " не была удалена, так как она не была установлена.";
+        QMessageBox::information(this, "Ошибка", std::move(text));
+    }
 }
 

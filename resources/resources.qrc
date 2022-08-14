@@ -1,5 +1,17 @@
 <RCC>
-    <qresource prefix="/qt/etc">
-        <file>qt.conf</file>
+    <qresource prefix="/icons">
+        <file alias="ButtonExitDown">ButtonExit_Down.RC_000400.ico</file>
+        <file alias="ButtonExitNormal">ButtonExit_Normal.RC_000387.ico</file>
+        <file alias="ButtonHide">hide.ico</file>
+        <file alias="ButtonHideDown">hide-pressed.ico</file>
+        <file alias="ButtonRemoveNormal">remove-button.ico</file>
+        <file alias="ButtonRemoveDown">remove-button-active.ico</file>
+        <file alias="ButtonReinstallNormal">reinstall_button.ico</file>
+        <file alias="ButtonReinstallDown">reinstall_button_down.ico</file>
+        <file alias="ButtonSettingsNormal">settings-button.ico</file>
+        <file alias="ButtonSettingsDown">settings-button-down.ico</file>
+        <file alias="MagicBoxRedux">MagicBoxRedux.ico</file>
+        <file>download.ico</file>
+        <file>download-pressed.ico</file>
     </qresource>
 </RCC>
