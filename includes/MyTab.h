@@ -26,6 +26,12 @@ protected:
 public:
     MyTab(std::wstring name);
     QWidget* get_tab();
+    QVBoxLayout *get_base_layout() const;
+    QScrollArea *get_scroll_area() const;
+    QWidget *get_scroll_area_contents() const;
+    QFormLayout *get_form_layout() const;
+    int get_count() const;
+    const std::vector<std::function<void()>> &get_buttons() const;
     QSpinBox* add_integer(const std::wstring& name, XMLNode& node);
     QTextEdit* add_string(const std::wstring& name, XMLNode& node);
     QCheckBox* add_boolean(const std::wstring& name, XMLNode& node);

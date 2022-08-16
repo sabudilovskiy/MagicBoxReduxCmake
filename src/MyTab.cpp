@@ -12,9 +12,12 @@ void MyTab::add_label(const std::wstring &name, XMLNode &node){
     std::wstring title = title_node->get_value();
 
     QString qname = QString::fromStdWString(name);
+    QString styleSheet = tab->styleSheet();
     QLabel* label = new QLabel(scroll_area_contents);
+    label->setStyleSheet(tab->styleSheet());
     label->setObjectName(qname + "_label");
     label->setText(QString::fromStdWString(title));
+    label->setStyleSheet(styleSheet);
     form_layout->setWidget(count, QFormLayout::LabelRole, label);
 }
 
@@ -31,6 +34,7 @@ MyTab::MyTab(std::wstring name) : count(0){
     scroll_area_contents->setGeometry(QRect(0,0,437,296));
     form_layout = new QFormLayout(scroll_area_contents);
     form_layout->setObjectName(QString::fromStdWString(name + L"form_layout_"));
+    form_layout->setSpacing(20);
     scroll_area->setWidget(scroll_area_contents);
     base_layout->addWidget(scroll_area);
 }
@@ -65,6 +69,7 @@ QSpinBox *MyTab::add_integer(const std::wstring &name, XMLNode &node){
     field->setMinimum(min_value);
     field->setMaximum(max_value);
     field->setValue(default_value);
+    field->setStyleSheet(tab->styleSheet());
     form_layout->setWidget(count, QFormLayout::FieldRole, field);
     count++;
     return field;
@@ -81,6 +86,7 @@ QCheckBox *MyTab::add_boolean(const std::wstring &name, XMLNode &node){
     QCheckBox* field = new QCheckBox(scroll_area_contents);
     field->setLayoutDirection(Qt::LayoutDirection::RightToLeft);
     field->setObjectName(file + '/' + qname);
+    field->setStyleSheet(tab->styleSheet());
     form_layout->setWidget(count, QFormLayout::FieldRole, field);
 
     count++;
@@ -117,6 +123,7 @@ QDoubleSpinBox *MyTab::add_double(const std::wstring &name, XMLNode &node){
     field->setMaximum(max_value);
     field->setValue(default_value);
     field->setSingleStep(step_value);
+    field->setStyleSheet(tab->styleSheet());
 
     form_layout->setWidget(count, QFormLayout::FieldRole, field);
     count++;
@@ -144,12 +151,13 @@ QTextEdit *MyTab::add_string(const std::wstring &name, XMLNode &node){
 
     field->setText(default_value);
     field->setObjectName(QString::fromStdWString(name));
-    field->setMinimumHeight(24);
+    field->setMaximumHeight(24);
     field->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
     field->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     field->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     field->setLineWrapMode(QTextEdit::NoWrap);
     field->setObjectName(file + '/' + qname);
+    field->setAlignment(Qt::AlignVCenter|Qt::AlignmentFlag::AlignLeft);
 
     form_layout->setWidget(count, QFormLayout::FieldRole, field);
     count++;
@@ -177,6 +185,8 @@ QTextEdit *MyTab::add_path_folder(const std::wstring &name, XMLNode &node) {
     field->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     field->setLineWrapMode(QTextEdit::NoWrap);
     field->setText(default_value);
+    field->setStyleSheet(tab->styleSheet());
+    field->setAlignment(Qt::AlignVCenter|Qt::AlignmentFlag::AlignLeft);
 
     QToolButton* tool_button = new QToolButton(scroll_area_contents);
     tool_button->setText("...");
@@ -213,6 +223,8 @@ QTextEdit *MyTab::add_path_file(const std::wstring &name, XMLNode &node) {
     field->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     field->setLineWrapMode(QTextEdit::NoWrap);
     field->setText(default_value);
+    field->setStyleSheet(tab->styleSheet());
+    field->setAlignment(Qt::AlignVCenter|Qt::AlignmentFlag::AlignLeft);
 
     QToolButton* tool_button = new QToolButton(scroll_area_contents);
     tool_button->setText("...");
@@ -250,13 +262,38 @@ QComboBox *MyTab::add_enum(const std::wstring &name, XMLNode &node) {
     }
 
     field->setObjectName(QString::fromStdWString(name));
-    field->setMinimumHeight(24);
+    field->setMaximumHeight(24);
     field->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
     field->setObjectName(file + '/' + qname);
     field->setCurrentText(default_value);
+    field->setStyleSheet(tab->styleSheet());
 
     form_layout->setWidget(count, QFormLayout::FieldRole, field);
     count++;
     return field;
+}
+
+QVBoxLayout *MyTab::get_base_layout() const {
+    return base_layout;
+}
+
+QScrollArea *MyTab::get_scroll_area() const {
+    return scroll_area;
+}
+
+QWidget *MyTab::get_scroll_area_contents() const {
+    return scroll_area_contents;
+}
+
+QFormLayout *MyTab::get_form_layout() const {
+    return form_layout;
+}
+
+int MyTab::get_count() const {
+    return count;
+}
+
+const std::vector<std::function<void()>> &MyTab::get_buttons() const {
+    return buttons;
 }
 

@@ -37,7 +37,7 @@ std::vector<XMLItem> parsefile(std::wistream &file){
                 xml.emplace_back(XMLItem::XMLType::CLOSE_TAG, std::move(temp));
             }
             else if (temp[0] == '!'){
-                int last = temp.size() - 1;
+                size_t last = temp.size() - 1;
                 if (temp.size() < 5 || temp[1] != '-' || temp[2] != '-' || temp[last - 1] != '-' || temp[last] != '-') {
                     xml.emplace_back(XMLItem::XMLType::OPEN_TAG, std::move(temp));
                 }

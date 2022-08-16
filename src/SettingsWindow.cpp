@@ -79,6 +79,7 @@ SettingsWindow::SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *
         ui(new Ui::SettingsWindow)
 {
     ui->setupUi(this);
+    this->show();
     std::wstring path_fl;
     if (!dir.empty()) {
         path_fl+= dir;
@@ -166,7 +167,14 @@ MyTab* SettingsWindow::add_tab(std::wstring name, XMLNode& node)
 {
     auto it = (_tabs.emplace(name, MyTab(name)));
     std::wstring title = node.get_child(L"title")->get_value();
-    ui->tabWidget->addTab(it.first->second.get_tab(), QString::fromStdWString(title));
+    QWidget* tab = it.first->second.get_tab();
+    auto scroll = it.first->second.get_scroll_area();
+    auto scrollContent = it.first->second.get_scroll_area_contents();
+    ui->tabWidget->addTab(tab, QString::fromStdWString(title));
+    QString styleSheet = ui->tabWidget->styleSheet();
+    tab->setStyleSheet(styleSheet);
+    scroll->setStyleSheet(styleSheet);
+    scrollContent->setStyleSheet(styleSheet);
     return &(it.first->second);
 }
 

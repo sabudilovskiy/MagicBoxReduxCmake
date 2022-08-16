@@ -2,75 +2,429 @@
 <ui version="4.0">
  <class>SettingsWindow</class>
  <widget class="QWidget" name="SettingsWindow">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>500</width>
+    <height>330</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Form</string>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>16777215</height>
+   </size>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <property name="windowTitle">
+   <string>SettingsWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/resources.qrc">
+    <normaloff>:/icons/MagicBoxRedux</normaloff>:/icons/MagicBoxRedux</iconset>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#SettingsWindow{
+	border: 5px double #474747;
+}</string>
+  </property>
+  <layout class="QHBoxLayout" name="main_layout" stretch="1,30">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QLabel" name="name">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QToolButton" name="load_button">
-       <property name="text">
-        <string>Загрузить</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="save_button">
-       <property name="text">
-        <string>Сохранить</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QWidget" name="verticalLayout_gradient" native="true">
+     <property name="styleSheet">
+      <string notr="true">QWidget{
+
+}</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_gradient_layout">
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="widget" native="true">
+        <property name="styleSheet">
+         <string notr="true">background-color : qlineargradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 #5aaf2f, stop:1 #1a290c)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="styleSheet">
-        <string notr="true">QTabBar{
-background-color:#282828;
-}
-QTabWidget::tab-bar::tab{
-background-color:#282828;
-color:white;
+    <widget class="QWidget" name="vlayout_top_panel_content" native="true">
+     <property name="styleSheet">
+      <string notr="true">QWidget{
+border: none;
 }</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+     </property>
+     <layout class="QVBoxLayout" name="vlayout_top_panel_content_layout" stretch="1,50">
+      <property name="spacing">
+       <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QWidget" name="hwidget_top_panel" native="true">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QWidget{
+background-color: qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgb(156, 154, 155));
+}
+QLabel, QToolButton{
+background-color: rgba(255, 255, 255, 0);
+color: rgb(255, 255, 255);
+padding: 0px;
+}</string>
+        </property>
+        <layout class="QHBoxLayout" name="hlayout_top_panel">
+         <property name="spacing">
+          <number>5</number>
+         </property>
+         <property name="sizeConstraint">
+          <enum>QLayout::SetDefaultConstraint</enum>
+         </property>
+         <property name="leftMargin">
+          <number>9</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>5</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
+           <property name="text">
+            <string>Настройки</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_name">
+           <property name="text">
+            <string>name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="toolButton_minimize">
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QToolButton{
+image: url(:/icons/ButtonHide);
+background-color: rgba(255, 255, 255, 0);
+padding: 0px;
+}
+QToolButton:pressed{
+image:url(:/icons/ButtonHideDown);
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>17</width>
+             <height>17</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="toolButton_exit">
+           <property name="styleSheet">
+            <string notr="true">QToolButton{
+image: url(:/icons/ButtonExitNormal);
+background-color: rgba(255, 255, 255, 0);
+padding: 0px;
+}
+QToolButton:pressed{
+image: url(:/icons/ButtonExitDown);
+}</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>17</width>
+             <height>17</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="hlayout_shadow_content" stretch="1,50">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="shadow" native="true">
+          <property name="styleSheet">
+           <string notr="true">background-color : qlineargradient(spread:pad, x1:0, y1:0.5, x2:1, y2:0, stop:0 #113916, stop:1 #31634d)</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="vlayout_content" native="true">
+          <property name="styleSheet">
+           <string notr="true">QWidget{
+background-color: #31634d;
+}
+QPushButton{
+background-color: rgb(64, 64, 64);
+color: rgb(255, 255, 255);
+border: solid;
+border-color: rgb(0, 0, 0);
+border-width: 1px;
+}</string>
+          </property>
+          <layout class="QVBoxLayout" name="vlayout_content_layout" stretch="1,20">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>10</number>
+           </property>
+           <property name="topMargin">
+            <number>8</number>
+           </property>
+           <property name="rightMargin">
+            <number>8</number>
+           </property>
+           <item>
+            <widget class="QWidget" name="hlayout_buttons_load_save" native="true">
+             <property name="styleSheet">
+              <string notr="true">QPushButton{
+background-color: rgb(64, 64, 64);
+color: white;
+border: solid;
+border-color: white;
+border-width: 1px;
+padding-left: 10px;
+padding-right: 10px;
+}</string>
+             </property>
+             <layout class="QHBoxLayout" name="hlayout_buttons_load_save_layout">
+              <property name="leftMargin">
+               <number>1</number>
+              </property>
+              <property name="topMargin">
+               <number>1</number>
+              </property>
+              <property name="rightMargin">
+               <number>1</number>
+              </property>
+              <property name="bottomMargin">
+               <number>1</number>
+              </property>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="load_button">
+                <property name="styleSheet">
+                 <string notr="true"/>
+                </property>
+                <property name="text">
+                 <string>Загрузить</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="save_button">
+                <property name="text">
+                 <string>Сохранить</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="hlayout_tabWidget" native="true">
+             <layout class="QHBoxLayout" name="hlayout_tabWidget_layout">
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>15</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QTabWidget" name="tabWidget">
+                <property name="styleSheet">
+                 <string notr="true">QTabWidget:pane{
+color:black;
+background-color:#3b3b3b;
+border-color: black;
+border: 2px solid;
+margin-top:0px;
+}
+QWidget{
+background-color:#3b3b3b;
+color:white;
+}
+QTabWidget{
+border-color: rgb(18, 18, 18);
+}
+QTabBar{
+background-color: rgb(0, 0, 0);
+}
+QTabBar::tab{
+background-color: #272828;
+border-color: black;
+border-style: solid;
+border-width: 1px 1px 0px 0px;
+}
+QTabBar::tab:first{
+border-left-width: 1px;
+}
+QTabBar::tab:selected{
+background-color: #3b3b3b;
+font-size:10em;
+}
+QTabBar::tab:hover{
+background-color: #3b3b3b;
+}
+QToolButton{
+	background-color: rgb(64, 64, 64);
+	color: white;
+	border: solid;
+	border-color: white;
+	border-width: 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	max-width:28px;
+}
+QAbstractSpinBox, QTextEdit, QComboBox{
+background-color: #292829;
+border-color: #5f5f5f;
+border: 1px solid;
+}
+QAbstractSpinBox, QTextEdit, QComboBox, QToolButton, QLabel{
+	min-height:28px;
+	vertical-align:middle;
+}</string>
+                </property>
+                <property name="currentIndex">
+                 <number>-1</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../resources/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
