@@ -1,4 +1,5 @@
 #include "SettingsWindow.h"
+#include "settingstestwindow.h"
 #include "xml.h"
 #include <QApplication>
 #include "AppSettings.h"

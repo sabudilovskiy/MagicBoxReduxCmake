@@ -153,7 +153,7 @@ XMLNode *XML::get_tag(const std::wstring &tag) {
     auto it = tags.begin();
     auto end = tags.end();
     while (!node && it!=end){
-        node = root->get_child(it->toStdWString());
+        node = node->get_child(it->toStdWString());
         ++it;
     }
     return node;
@@ -164,8 +164,8 @@ XMLNode const *XML::get_tag(const std::wstring &tag) const {
     auto node = root;
     auto it = tags.begin();
     auto end = tags.end();
-    while (!node && it!=end){
-        node = root->get_child(it->toStdWString());
+    while (node && it!=end){
+        node = node->get_child(it->toStdWString());
         ++it;
     }
     return node;

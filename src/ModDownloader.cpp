@@ -118,7 +118,9 @@ void ModDownloader::downloaded_config(dhash_t hash_item, dnetwork_error network_
 
 ModDownloader::ModDownloader(const std::wstring &url, const std::wstring &path_config, Downloader &downloader,
                              ModController &mod_controller) : _path_config(path_config), downloader(downloader), mod_controller(mod_controller){
-    QUrl qurl(QString::fromStdWString(url));
+    auto url_query = QString::fromStdWString(url).split('?');
+    QUrl qurl(url_query[0]);
+    if (url_query.size() > 1) qurl.setQuery(url_query[1]);
     QObject::connect(
             &downloader,
             &Downloader::downloaded_file,

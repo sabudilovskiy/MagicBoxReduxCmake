@@ -40,6 +40,7 @@ set(PROJECT_SOURCES
                 includes/Support.h src/Support.cpp
                 includes/AppSettings.h src/AppSettings.cpp
                 includes/ManagerWindow.h src/ManagerWindow.cpp src/ManagerWindow.ui
+                includes/settingstestwindow.h src/settingstestwindow.cpp src/settingstestwindow.ui
         resources/resources.qrc
         )
 

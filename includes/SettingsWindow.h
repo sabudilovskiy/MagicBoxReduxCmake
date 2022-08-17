@@ -4,6 +4,7 @@
 #include "xmlnode.h"
 #include <unordered_map>
 #include "MyTab.h"
+#include <QMainWindow>
 namespace Ui {
 class SettingsWindow;
 }
@@ -15,7 +16,7 @@ class UnknownTab : public std::exception{
 
 };
 
-class SettingsWindow : public QWidget
+class SettingsWindow : public QMainWindow
 {
     Q_OBJECT
     std::vector<QSpinBox*> _spin_boxes;

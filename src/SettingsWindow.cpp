@@ -73,7 +73,7 @@ void store_info(QComboBox* box, std::map<QString,XML>& xmls){
     node->set_value(box->currentText().toStdWString());
 }
 SettingsWindow::SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *parent) :
-        QWidget(parent),
+        QMainWindow(parent),
         _name_fl(name_fl),
         _dir(dir),
         ui(new Ui::SettingsWindow)

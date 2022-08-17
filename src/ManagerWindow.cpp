@@ -11,7 +11,7 @@ ManagerWindow::~ManagerWindow()
 
 ManagerWindow::ManagerWindow(const AppSettings& app_settings, ModDownloader &mod_downloader, QWidget *parent) :
         _app_settings(app_settings),
-        QWidget(parent),
+        QMainWindow(parent),
         _mod_downloader(mod_downloader),
         ui(new Ui::ManagerWindow)
 {

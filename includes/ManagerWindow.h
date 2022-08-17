@@ -1,6 +1,7 @@
 #ifndef MANAGERWINDOW_H
 #define MANAGERWINDOW_H
 
+#include <QMainWindow>
 #include <QWidget>
 #include "ModDownloader.h"
 #include "AppSettings.h"
@@ -10,7 +11,7 @@ class ManagerWindow;
 enum InstalledPolicy{
     SKIP, REINSTALL, ASK
 };
-class ManagerWindow : public QWidget
+class ManagerWindow : public QMainWindow
 {
 protected:
     Q_OBJECT
