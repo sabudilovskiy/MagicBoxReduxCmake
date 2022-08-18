@@ -100,7 +100,7 @@ void MainWindow::on_pushButton_settings_clicked()
     if (!std::filesystem::exists(L"options.fl")){
         app_settings.generate_fl_file();
     }
-    _settings_window = new SettingsWindow(L"", L"settings.fl");
+    _settings_window = new SettingsWindow(L"", L"settings.fl", "Настройки MagicBoxRedux");
     QObject::connect(_settings_window, &SettingsWindow::resaved_file, &app_settings, &AppSettings::load);
     _settings_window->show();
 }
@@ -173,7 +173,11 @@ void MainWindow::on_toolButton_set_config_clicked()
     std::wstring full_path = app_settings.get_setting(L"path_game");
     full_path+=L"/MODS/";
     full_path+=mod_controller.get_name_folder(installed_mods_db[db_id], installed_mods_sdk[sdk_id]);
-    _settings_window = new SettingsWindow(full_path, L"mod.fl");
+    QString text = "Настройки ";
+    text += ui->db_listWidget->item(db_id)->text();
+    text += " + ";
+    text += ui->sdk_listWidget->item(sdk_id)->text();
+    _settings_window = new SettingsWindow(full_path, L"mod.fl",  text);
     _settings_window->show();
 }
 

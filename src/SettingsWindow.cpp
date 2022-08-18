@@ -72,13 +72,14 @@ void store_info(QComboBox* box, std::map<QString,XML>& xmls){
     node->change_type(XMLNodeType::VALUE);
     node->set_value(box->currentText().toStdWString());
 }
-SettingsWindow::SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *parent) :
+SettingsWindow::SettingsWindow(std::wstring dir, std::wstring name_fl, QString name, QWidget *parent) :
         QMainWindow(parent),
         _name_fl(name_fl),
         _dir(dir),
         ui(new Ui::SettingsWindow)
 {
     ui->setupUi(this);
+    ui->label_name->setText(name);
     QObject::connect(ui->toolButton_minimize, &QToolButton::clicked, this, &SettingsWindow::showMinimized);
     QObject::connect(ui->toolButton_exit, &QToolButton::clicked, this, &SettingsWindow::close);
     std::wstring path_fl;

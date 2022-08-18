@@ -32,7 +32,7 @@ protected:
     std::vector<QString> _files;
     Ui::SettingsWindow *ui;
 public:
-    explicit SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *parent = nullptr);
+    explicit SettingsWindow(std::wstring dir, std::wstring name_fl, QString name, QWidget *parent = nullptr);
     ~SettingsWindow();
     void add_elem(const std::wstring& name, XMLNode& node);
     MyTab* add_tab(std::wstring name, XMLNode& node);
