@@ -18,6 +18,7 @@ class UnknownTab : public std::exception{
 
 class SettingsWindow : public QMainWindow
 {
+protected:
     Q_OBJECT
     std::vector<QSpinBox*> _spin_boxes;
     std::vector<QCheckBox*> _check_boxes;
@@ -29,6 +30,7 @@ class SettingsWindow : public QMainWindow
     std::wstring _name_file;
     std::wstring _dir;
     std::vector<QString> _files;
+    Ui::SettingsWindow *ui;
 public:
     explicit SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *parent = nullptr);
     ~SettingsWindow();
@@ -37,11 +39,9 @@ public:
     MyTab* find_tab(const std::wstring& key);
 signals:
     void resaved_file();
-private slots:
+protected slots:
     void on_load_button_clicked();
     void on_save_button_clicked();
-private:
-    Ui::SettingsWindow *ui;
 };
 
 #endif // SDKSETTINGS_H

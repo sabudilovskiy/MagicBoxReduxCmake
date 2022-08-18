@@ -1,4 +1,6 @@
+#include <QDebug>
 #include <QFile>
+#include <magic_enum.hpp>
 #include <filesystem>
 #include "Downloader.h"
 #include "Support.h"
@@ -9,6 +11,7 @@ void Downloader::download() {
     if (!items.empty()){
         items.pop_front(cur);
         QNetworkRequest request(cur.url);
+        //request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::RedirectPolicy::NoLessSafeRedirectPolicy);
         emit start_downloading(cur.hash);
         auto reply = network_access_manager->get(request);
         QObject::connect(reply, &QNetworkReply::downloadProgress, this, &Downloader::downloaded_progress);
@@ -22,13 +25,32 @@ void Downloader::downloaded(QNetworkReply* reply) {
     if (!std::filesystem::exists(folder)){
         std::filesystem::create_directories(folder);
     }
+    QVariant code = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    if (code.toInt() == 301 || code.toInt() == 302){
+        QVariant redirection_url = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+        QUrl qurl(redirection_url.toUrl());
+        if (qurl.scheme().isEmpty() && qurl.host().isEmpty()){
+            QUrl old_qurl = reply->url();
+            qurl.setHost(old_qurl.host());
+            qurl.setScheme(old_qurl.scheme());
+        }
+        auto new_reply = network_access_manager->get(QNetworkRequest(qurl));
+        QObject::connect(new_reply, &QNetworkReply::downloadProgress, this, &Downloader::downloaded_progress);
+        reply->deleteLater();
+        return;
+    }
     if (reply->error() == dnetwork_error::NoError){
        file.open( QFile::WriteOnly);
        if (!file.error()){
-           file.write(reply->readAll());
+           auto data = reply->readAll();
+
+           qDebug() << data.size() << '\n';
+           qDebug() << reply->isFinished() << '\n';
+           file.write(data);
            file.close();
        }
     }
+    //else qDebug() << magic_enum::enum_name(reply->error()).data();
     emit downloaded_file(cur.hash, reply->error(), file.error());
     emit download();
 }
@@ -39,9 +61,9 @@ Downloader::Downloader(QObject *parent) :
     work.store(false);
     network_access_manager = new QNetworkAccessManager(this);
     QObject::connect(network_access_manager,
-                     SIGNAL (finished(QNetworkReply*)),
+                     &QNetworkAccessManager::finished,
                      this,
-                     SLOT (downloaded(QNetworkReply*))
+                     &Downloader::downloaded
                      );
 }
 

@@ -57,6 +57,7 @@ void ModDownloader::downloaded_mod(dhash_t hash_item, dnetwork_error network_err
                 downloaded_mod.get_type());
         mod_controller.add_mod(mod);
         downloaded_mod.get_installed()[info_download.ID_version] = true;
+        _downloads.erase(download);
     }
     emit signal_downloaded_mod(info_download, network_err, file_err);
 }
@@ -89,12 +90,6 @@ std::wstring ModDownloader::get_path_zip(DOWNLOAD_INFO info_download) {
     return path;
 }
 
-ModDownloader::ModDownloader(const std::wstring &path_config, Downloader &downloader, ModController &mod_controller)
-        : downloader(downloader), mod_controller(mod_controller), _path_config(path_config){
-    load_from_xml();
-    connect();
-}
-
 const std::vector<ModServer> &ModDownloader::get_mods_db() {
     return _mods_db;
 }
@@ -117,16 +112,8 @@ void ModDownloader::downloaded_config(dhash_t hash_item, dnetwork_error network_
 }
 
 ModDownloader::ModDownloader(const std::wstring &url, const std::wstring &path_config, Downloader &downloader,
-                             ModController &mod_controller) : _path_config(path_config), downloader(downloader), mod_controller(mod_controller){
-    auto url_query = QString::fromStdWString(url).split('?');
-    QUrl qurl(url_query[0]);
-    if (url_query.size() > 1) qurl.setQuery(url_query[1]);
-    QObject::connect(
-            &downloader,
-            &Downloader::downloaded_file,
-            this,
-            &ModDownloader::downloaded_config);
-    downloader.add_download(qurl, path_config);
+                             ModController &mod_controller) : _path_config(path_config), downloader(downloader), mod_controller(mod_controller), _url(url){
+    download_config();
 }
 
 void ModDownloader::load_from_xml() {
@@ -273,6 +260,31 @@ void ModDownloader::connect() {
 void ModDownloader::add_mod(ModServer mod) {
     auto& mods = mod.get_type() == Mod::DB ? _mods_db : _mods_sdk;
     mods.push_back(std::move(mod));
+}
+
+int ModDownloader::number_downloadings() {
+    return _downloads.size();
+}
+
+void ModDownloader::download_config() {
+    auto url_query = QString::fromStdWString(_url).split('?');
+    QUrl qurl(url_query[0]);
+    if (url_query.size() > 1) qurl.setQuery(url_query[1]);
+    QObject::connect(
+            &downloader,
+            &Downloader::downloaded_file,
+            this,
+            &ModDownloader::downloaded_config);
+    downloader.add_download(qurl, _path_config);
+}
+
+void ModDownloader::refresh_config() {
+    QObject::disconnect(
+            &downloader,
+            &Downloader::downloaded_file,
+            this,
+            &ModDownloader::downloaded_config);
+    download_config();
 }
 
 DOWNLOAD_INFO::DOWNLOAD_INFO(int id_mod, int id_version, Mod::Type type) : ID_mod(id_mod), ID_version(id_version),

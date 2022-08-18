@@ -29,9 +29,8 @@ protected:
     std::vector<ModServer> _mods_sdk;
     std::unordered_map<dhash_t, DOWNLOAD_INFO> _downloads;
     const std::wstring & _path_config;
+    const std::wstring& _url;
 public:
-    //класс загрузит из файла
-    ModDownloader(const std::wstring &path_config, Downloader &downloader, ModController &mod_controller);
     //класс сам загрузит нужные данные
     ModDownloader(const std::wstring &url, const std::wstring &path_config, Downloader &downloader,
                   ModController &mod_controller);
@@ -39,11 +38,13 @@ public:
     void add_mod(ModServer mod);
     const std::vector<ModServer>& get_mods_db();
     const std::vector<ModServer>& get_mods_sdk();
+    int number_downloadings();
 protected:
     std::wstring get_path_zip(DOWNLOAD_INFO info_download);
     std::wstring get_path(DOWNLOAD_INFO info_download);
     void clear();
     void connect();
+    void download_config();
 protected slots:
     void downloaded_mod(dhash_t hash_item, dnetwork_error network_err, dfile_error file_err);
     void start_downloading(dhash_t hash_item);
@@ -54,6 +55,7 @@ public:
     void load_from_xml();
     void update_downloaded();
     bool installed(DOWNLOAD_INFO info_download) const;
+    void refresh_config();
     signals:
     void refreshed_list();
     void downloading_progress(qint64 downloaded, qint64 all);

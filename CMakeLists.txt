@@ -7,7 +7,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CONAN_DISABLE_CHECK_COMPILER TRUE)
@@ -20,6 +19,7 @@ find_package(magic_enum)
 find_package(LibCDS)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Network)
+find_package(OpenSSL)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "C:\\MagicBoxReduxRelease")
 include_directories(includes)
 set(PROJECT_SOURCES
@@ -39,10 +39,9 @@ set(PROJECT_SOURCES
                 includes/ModDownloader.h src/ModDownloader.cpp
                 includes/Support.h src/Support.cpp
                 includes/AppSettings.h src/AppSettings.cpp
-                includes/ManagerWindow.h src/ManagerWindow.cpp src/ManagerWindow.ui
-                includes/settingstestwindow.h src/settingstestwindow.cpp src/settingstestwindow.ui
+        includes/DownloaderWindow.h src/DownloaderWindow.cpp src/DownloaderWindow.ui
         resources/resources.qrc
-        )
+        includes/MBReduxApplication.cpp includes/MBReduxApplication.h)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(MagicBoxReduxCmake
@@ -73,6 +72,9 @@ target_link_libraries(MagicBoxReduxCmake PRIVATE xxHash::xxhash)
 target_link_libraries(MagicBoxReduxCmake PRIVATE libzippp::libzippp)
 target_link_libraries(MagicBoxReduxCmake PRIVATE magic_enum::magic_enum)
 target_link_libraries(MagicBoxReduxCmake PRIVATE LibCDS::cds-s)
+target_link_libraries(MagicBoxReduxCmake PRIVATE OpenSSL::Crypto)
+target_link_libraries(MagicBoxReduxCmake PRIVATE OpenSSL::SSL)
+
 set_target_properties(MagicBoxReduxCmake PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}

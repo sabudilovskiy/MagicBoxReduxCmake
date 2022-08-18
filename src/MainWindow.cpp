@@ -11,7 +11,6 @@
 namespace fs = std::filesystem;
 
 MainWindow::MainWindow(AppSettings &app_settings, Downloader &downloader, QWidget *parent) :
-        QMainWindow(parent),
         downloader(downloader),
         app_settings(app_settings),
         ui(new Ui::MainWindow),
@@ -21,7 +20,8 @@ MainWindow::MainWindow(AppSettings &app_settings, Downloader &downloader, QWidge
                        app_settings.get_setting(L"path_config_ModDownloader"),
                        downloader, mod_controller)
 {
-    this->manager_window = std::make_unique<ManagerWindow>(app_settings, mod_downloader);
+    if (parent) this->setParent(parent);
+    this->manager_window = std::make_unique<DownloaderWindow>(app_settings, mod_downloader);
     ui->setupUi(this);
     reload_mods();
     QObject::connect(&mod_controller, &ModController::change_db, this, &MainWindow::reload_db);
@@ -108,7 +108,7 @@ void MainWindow::on_pushButton_settings_clicked()
 
 void MainWindow::on_MainWindow_destroyed()
 {
-    emit exit_app(0);
+    emit exit_app();
 }
 
 
@@ -227,7 +227,7 @@ void MainWindow::on_toolButton_set_delete_clicked() {
             text += " и ";
             text += ui->sdk_listWidget->item(sdk_id)->text();
             text += " успешна удалена";
-            QMessageBox::information(this, "Удалена сборка", std::move(text));
+            QMessageBox::information(this, "Удалена сборка", text);
         }
     }
     else{
@@ -238,5 +238,26 @@ void MainWindow::on_toolButton_set_delete_clicked() {
         text += " не была удалена, так как она не была установлена.";
         QMessageBox::information(this, "Ошибка", std::move(text));
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event) {
+    if (mod_downloader.number_downloadings() > 0){
+        QMessageBox msgBox;
+        msgBox.setText("Выполняется скачивание");
+        msgBox.setInformativeText("Закрыть Magic box?");
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        int ret = msgBox.exec();
+        if (ret == QMessageBox::Yes){
+            event->accept();
+            emit exit_app();
+        }
+    }
+    else
+    {
+        event->accept();
+        emit exit_app();
+    }
+    event->ignore();
 }
 

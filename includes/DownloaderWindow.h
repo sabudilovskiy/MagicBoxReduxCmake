@@ -6,24 +6,24 @@
 #include "ModDownloader.h"
 #include "AppSettings.h"
 namespace Ui {
-class ManagerWindow;
+class DownloaderWindow;
 }
 enum InstalledPolicy{
     SKIP, REINSTALL, ASK
 };
-class ManagerWindow : public QMainWindow
+class DownloaderWindow : public QMainWindow
 {
 protected:
     Q_OBJECT
     const AppSettings& _app_settings;
     ModDownloader& _mod_downloader;
     std::vector<ModVersion> _mods_db, _mods_sdk;
-    Ui::ManagerWindow *ui;
+    Ui::DownloaderWindow *ui;
     int _downloaded = 0, _downloading = 0;
     InstalledPolicy _installed_policy;
 public:
-    explicit ManagerWindow(const AppSettings& app_settings, ModDownloader &mod_downloader, QWidget *parent = nullptr);
-    ~ManagerWindow();
+    explicit DownloaderWindow(const AppSettings& app_settings, ModDownloader &mod_downloader, QWidget *parent = nullptr);
+    ~DownloaderWindow();
 protected:
     void add_downloading();
     void add_downloaded();
@@ -36,6 +36,7 @@ protected slots:
     void update_bytes_progress_bar(qint64 downloaded_bytes, qint64 total_bytes);
     void downloading_mod(DOWNLOAD_INFO mod);
     void downloaded_mod(DOWNLOAD_INFO mod, dnetwork_error network_err, dfile_error file_err);
+    void on_toolButton_refresh_clicked();
 };
 
 #endif // MANAGERWINDOW_H

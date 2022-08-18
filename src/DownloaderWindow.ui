@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ManagerWindow</class>
- <widget class="QMainWindow" name="ManagerWindow">
+ <class>DownloaderWindow</class>
+ <widget class="QMainWindow" name="DownloaderWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -471,11 +471,13 @@ QProgressBar {
 border: 2px solid black;
 background-color: #282828;
 text-align: center;
+padding : 0px;
 }
 QProgressBar::chunk {
 border: 1px solid black;
 background-color: #e7e28d;
 width: 10px;
+height: 20px;
 }
 QLabel{
 border:none;
@@ -510,67 +512,108 @@ color:white;
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="hlayout_progress_bar_mods_l">
-                 <item>
-                  <widget class="QLabel" name="label_mods">
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string>0/0</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QProgressBar" name="progressBar_mods">
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true"/>
-                   </property>
-                   <property name="value">
-                    <number>100</number>
-                   </property>
-                   <property name="format">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <spacer name="verticalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>20</width>
+                   <height>10</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="hlayout_progress_bar_bytes_l">
-                 <item>
-                  <widget class="QLabel" name="label_bytes">
-                   <property name="text">
-                    <string>0/0</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QProgressBar" name="progressBar_bytes">
-                   <property name="maximumSize">
-                    <size>
-                     <width>16777215</width>
-                     <height>50</height>
-                    </size>
-                   </property>
-                   <property name="value">
-                    <number>100</number>
-                   </property>
-                   <property name="format">
-                    <string/>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QWidget" name="fLayout_progress" native="true">
+                 <property name="styleSheet">
+                  <string notr="true">QWidget#fLayout_progress{
+border-color: rgb(18, 18, 18);
+border: 2px solid;
+}</string>
+                 </property>
+                 <layout class="QFormLayout" name="fLayout_progress_">
+                  <property name="horizontalSpacing">
+                   <number>10</number>
+                  </property>
+                  <property name="verticalSpacing">
+                   <number>5</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>10</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>5</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>10</number>
+                  </property>
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_mods">
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>0/0</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QProgressBar" name="progressBar_mods">
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="styleSheet">
+                     <string notr="true"/>
+                    </property>
+                    <property name="value">
+                     <number>100</number>
+                    </property>
+                    <property name="format">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_bytes">
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="text">
+                     <string>0/0</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QProgressBar" name="progressBar_bytes">
+                    <property name="maximumSize">
+                     <size>
+                      <width>16777215</width>
+                      <height>30</height>
+                     </size>
+                    </property>
+                    <property name="value">
+                     <number>100</number>
+                    </property>
+                    <property name="format">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
                </item>
               </layout>
              </widget>

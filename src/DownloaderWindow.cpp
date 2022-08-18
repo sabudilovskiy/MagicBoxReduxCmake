@@ -1,33 +1,35 @@
-#include "ManagerWindow.h"
-#include "ui_ManagerWindow.h"
+#include "DownloaderWindow.h"
+#include "ui_DownloaderWindow.h"
 #define MAGIC_ENUM_RANGE_MIN 0
 #define MAGIC_ENUM_RANGE_MAX 500
 #include <magic_enum.hpp>
 #include <QMessageBox>
-ManagerWindow::~ManagerWindow()
+DownloaderWindow::~DownloaderWindow()
 {
     delete ui;
 }
 
-ManagerWindow::ManagerWindow(const AppSettings& app_settings, ModDownloader &mod_downloader, QWidget *parent) :
+DownloaderWindow::DownloaderWindow(const AppSettings& app_settings, ModDownloader &mod_downloader, QWidget *parent) :
         _app_settings(app_settings),
         QMainWindow(parent),
         _mod_downloader(mod_downloader),
-        ui(new Ui::ManagerWindow)
+        ui(new Ui::DownloaderWindow)
 {
     ui->setupUi(this);
-    QObject::connect(&mod_downloader, &ModDownloader::refreshed_list, this, &ManagerWindow::update_mod);
+    QObject::connect(&mod_downloader, &ModDownloader::refreshed_list, this, &DownloaderWindow::update_mod);
     update_mod();
     update_settings();
-    QObject::connect(&mod_downloader, &ModDownloader::signal_downloaded_mod, this, &ManagerWindow::downloaded_mod);
-    QObject::connect(&mod_downloader, &ModDownloader::downloading_progress, this, &ManagerWindow::update_bytes_progress_bar);
-    QObject::connect(&mod_downloader, &ModDownloader::signal_downloading_mod, this, &ManagerWindow::downloading_mod);
-    QObject::connect(&mod_downloader, &ModDownloader::refreshed_list, this, &ManagerWindow::update_mod);
-    QObject::connect(&app_settings, &AppSettings::change_settings, this, &ManagerWindow::update_settings);
+    QObject::connect(&mod_downloader, &ModDownloader::signal_downloaded_mod, this, &DownloaderWindow::downloaded_mod);
+    QObject::connect(&mod_downloader, &ModDownloader::downloading_progress, this, &DownloaderWindow::update_bytes_progress_bar);
+    QObject::connect(&mod_downloader, &ModDownloader::signal_downloading_mod, this, &DownloaderWindow::downloading_mod);
+    QObject::connect(&mod_downloader, &ModDownloader::refreshed_list, this, &DownloaderWindow::update_mod);
+    QObject::connect(&app_settings, &AppSettings::change_settings, this, &DownloaderWindow::update_settings);
+    QObject::connect(ui->toolButton_minimize, &QToolButton::clicked, this, &DownloaderWindow::showMinimized);
+    QObject::connect(ui->toolButton_exit, &QToolButton::clicked, this, &DownloaderWindow::close);
 }
 
 
-void ManagerWindow::update_mod() {
+void DownloaderWindow::update_mod() {
     auto count_db = _mod_downloader.get_mods_db().size();
     auto count_sdk = _mod_downloader.get_mods_sdk().size();
     _mods_db.clear();
@@ -80,7 +82,7 @@ void ManagerWindow::update_mod() {
     }
 }
 
-void ManagerWindow::on_pushButton_download_clicked()
+void DownloaderWindow::on_pushButton_download_clicked()
 {
     auto items_db = ui->listWidget_db->selectedItems();
     for (auto & item_db: items_db){
@@ -150,7 +152,7 @@ void ManagerWindow::on_pushButton_download_clicked()
     }
 }
 
-void ManagerWindow::downloaded_mod(DOWNLOAD_INFO mod, dnetwork_error network_err, dfile_error file_err) {
+void DownloaderWindow::downloaded_mod(DOWNLOAD_INFO mod, dnetwork_error network_err, dfile_error file_err) {
     auto& list = mod.type == Mod::DB ? ui->listWidget_db: ui->listWidget_sdk;
     auto item = list->item(get_index(mod));
     QString text = item->text();
@@ -174,11 +176,11 @@ void ManagerWindow::downloaded_mod(DOWNLOAD_INFO mod, dnetwork_error network_err
     add_downloaded();
 }
 
-void ManagerWindow::update_settings() {
+void DownloaderWindow::update_settings() {
     _installed_policy = magic_enum::enum_cast<InstalledPolicy>(string_from_wstring(_app_settings.get_setting(L"policies_downloadInstalledMods"))).value();
 }
 
-void ManagerWindow::add_downloading() {
+void DownloaderWindow::add_downloading() {
     if (_downloaded == _downloading){
         _downloading = 1;
         _downloaded = 0;
@@ -189,24 +191,24 @@ void ManagerWindow::add_downloading() {
     update_mod_progress_bar();
 }
 
-void ManagerWindow::add_downloaded() {
+void DownloaderWindow::add_downloaded() {
     ++_downloaded;
     update_mod_progress_bar();
 }
 
- int ManagerWindow::get_index(DOWNLOAD_INFO mod) const{
+ int DownloaderWindow::get_index(DOWNLOAD_INFO mod) const{
     auto& mods = mod.type == Mod::Type::DB ? _mods_db: _mods_sdk;
     ModVersion mod_version{mod.ID_mod, mod.ID_version};
     return std::distance(mods.begin(), std::find(mods.begin(),  mods.end(), mod_version));
 }
 
-void ManagerWindow::update_mod_progress_bar() {
+void DownloaderWindow::update_mod_progress_bar() {
     ui->progressBar_mods->setMaximum(_downloading);
     ui->progressBar_mods->setValue(_downloaded);
     ui->label_mods->setText(QString::number(_downloaded) + "/" + QString::number(_downloading));
 }
 
-void ManagerWindow::downloading_mod(DOWNLOAD_INFO mod) {
+void DownloaderWindow::downloading_mod(DOWNLOAD_INFO mod) {
     auto& list = mod.type == Mod::DB ? ui->listWidget_db: ui->listWidget_sdk;
     auto item = list->item(get_index(mod));
     QString text = "Скачивается: ";
@@ -214,7 +216,7 @@ void ManagerWindow::downloading_mod(DOWNLOAD_INFO mod) {
     ui->label_downloading_mod->setText(text);
 }
 
-void ManagerWindow::update_bytes_progress_bar(qint64 downloaded_bytes, qint64 total_bytes) {
+void DownloaderWindow::update_bytes_progress_bar(qint64 downloaded_bytes, qint64 total_bytes) {
     if (total_bytes == -1){
         return;
     }
@@ -251,6 +253,14 @@ void ManagerWindow::update_bytes_progress_bar(qint64 downloaded_bytes, qint64 to
     ui->label_bytes->setText(text);
     ui->progressBar_bytes->setMaximum(total);
     ui->progressBar_bytes->setValue(downloaded);
+}
+
+void DownloaderWindow::on_toolButton_refresh_clicked() {
+    if (_mod_downloader.number_downloadings() > 0){
+        QMessageBox* message_box;
+        message_box->warning(this, "Невозможно обновить доступные моды для скачивания", "Невозможно обновить доступные моды для скачивания, так как есть незавершённые загрузки");
+    }
+    else _mod_downloader.refresh_config();
 }
 
 

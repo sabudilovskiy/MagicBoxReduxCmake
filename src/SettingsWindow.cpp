@@ -79,7 +79,8 @@ SettingsWindow::SettingsWindow(std::wstring dir, std::wstring name_fl, QWidget *
         ui(new Ui::SettingsWindow)
 {
     ui->setupUi(this);
-    this->show();
+    QObject::connect(ui->toolButton_minimize, &QToolButton::clicked, this, &SettingsWindow::showMinimized);
+    QObject::connect(ui->toolButton_exit, &QToolButton::clicked, this, &SettingsWindow::close);
     std::wstring path_fl;
     if (!dir.empty()) {
         path_fl+= dir;
